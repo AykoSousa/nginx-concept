@@ -16,7 +16,7 @@ jobs:
         with:
           registry: ${{ secrets.REGISTRY_URL }}
           username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          password: ${{ secrets.DOCKER_PAT }}
 
       - name: Build and Push Docker Image
         id: build-push
