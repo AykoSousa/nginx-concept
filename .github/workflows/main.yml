@@ -20,7 +20,7 @@ jobs:
         with:
           registry: ${{ secrets.REGISTRY_URL }}
           username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.DOCKER_PAT }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build and Push Docker Image
         id: build-push
@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.REGISTRY_URL }}/$"REPO_NAME":${{ github.sha }}
+          tags: ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }}
 
   test:
     name: Run Tests
@@ -36,12 +36,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull Image
-        run: docker pull ${{ secrets.REGISTRY_URL }}/$REPO_NAME:${{ github.sha }}
+        run: docker pull ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }}
 
       - name: Run Tests in Container
         run: |
-          docker run --rm ${{ secrets.REGISTRY_URL }}/$REPO_NAME:${{ github.sha }} npm ci
-          docker run --rm ${{ secrets.REGISTRY_URL }}/$REPO_NAME:${{ github.sha }} npm test
+          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }} npm ci
+          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }} npm test
 
   deploy:
     name: Deploy Application
@@ -50,8 +50,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Pull Image
-        run: docker pull ${{ secrets.REGISTRY_URL }}/$REPO_NAME:${{ github.sha }}
+        run: docker pull ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }}
 
       - name: Deploy message
         run: |
-          docker run --rm ${{ secrets.REGISTRY_URL }}/$REPO_NAME:${{ github.sha }} bash -c "echo 'Application deployed successfully!'"
+          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }} bash -c "echo 'Application deployed successfully!'"
