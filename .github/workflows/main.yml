@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.REGISTRY_USER }}/${{ env.REPO_NAME }}:${{ github.sha }}
+          tags: aykosn/nginx-concept:${{ github.sha }}
 
   test:
     name: Run Tests
