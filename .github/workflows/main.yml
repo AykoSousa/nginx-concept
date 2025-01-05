@@ -1,0 +1,51 @@
+# .github/workflows/main.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        id: build-push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
+
+  test:
+    name: Run Tests
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
+    steps:
+      - name: Run Tests
+        run: |
+          npm ci
+          npm test
+
+  deploy:
+    name: Deploy Application
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    container:
+      image: ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
+    steps:
+      - name: Deploy message
+        run: echo "Application deployed successfully!"
