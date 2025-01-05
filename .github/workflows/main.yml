@@ -1,4 +1,3 @@
-# .github/workflows/main.yml
 name: CI/CD Pipeline
 
 on:
@@ -31,21 +30,24 @@ jobs:
     name: Run Tests
     needs: build
     runs-on: ubuntu-latest
-    container:
-      image: ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
     steps:
-      - name: Run Tests
+      - name: Pull Image
+        run: docker pull ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
+
+      - name: Run Tests in Container
         run: |
-          npm ci
-          npm test
+          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }} npm ci
+          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }} npm test
 
   deploy:
     name: Deploy Application
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    container:
-      image: ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
     steps:
+      - name: Pull Image
+        run: docker pull ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }}
+
       - name: Deploy message
-        run: echo "Application deployed successfully!"
+        run: |
+          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ github.repository }}:${{ github.sha }} bash -c "echo 'Application deployed successfully!'"
