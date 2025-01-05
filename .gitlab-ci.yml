@@ -1,0 +1,46 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_NAME: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}
+
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+build:
+  stage: build
+  script:
+    - export IMAGE_NAME_LOWER=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
+    - docker build -t "$IMAGE_NAME_LOWER" .
+    - docker push "$IMAGE_NAME_LOWER"
+
+test:
+  stage: test
+  image: docker:latest
+  dependencies:
+    - build
+  script:
+    - apk add --no-cache nodejs npm
+    - npm ci
+    - npm test
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  dependencies:
+    - build
+  script:
+    - echo "Application deployed with successfully!"
+  only:
+    - main
+  environment:
+    name: production

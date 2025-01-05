@@ -1,0 +1,21 @@
+{
+    "name": "nginx-comcept",
+    "version": "1.0.0",
+    "description": "",
+    "main": "/src/server.js",
+    "scripts": {
+        "test": "jest",
+        "dev": "node --watch src/server.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.21.2",
+        "xvfb": "^0.4.0"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "supertest": "^7.0.0"
+    }
+}
