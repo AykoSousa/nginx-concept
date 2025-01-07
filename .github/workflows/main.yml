@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull Image
-        run: docker pull ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }}
+        run: docker pull aykosn/nginx-concept:${{ github.sha }}
 
       - name: Run Tests in Container
         run: |
