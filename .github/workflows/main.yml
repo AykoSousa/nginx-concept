@@ -49,8 +49,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Pull Image
-        run: docker pull ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }}
+        run: docker pull aykosn/nginx-concept:${{ github.sha }}
 
       - name: Deploy message
         run: |
-          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }} bash -c "echo 'Application deployed successfully!'"
+          docker run --rm aykosn/nginx-concept:${{ github.sha }} bash -c "echo 'Application deployed successfully!'"
