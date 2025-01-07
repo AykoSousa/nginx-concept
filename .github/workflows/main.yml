@@ -39,8 +39,8 @@ jobs:
 
       - name: Run Tests in Container
         run: |
-          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }} npm ci
-          docker run --rm ${{ secrets.REGISTRY_URL }}/${{ env.REPO_NAME }}:${{ github.sha }} npm test
+          docker run --rm aykosn/nginx-concept:${{ github.sha }} npm ci
+          docker run --rm aykosn/nginx-concept:${{ github.sha }} npm test
 
   deploy:
     name: Deploy Application
