@@ -53,4 +53,4 @@ jobs:
 
       - name: Deploy message
         run: |
-          docker run --rm aykosn/nginx-concept:${{ github.sha }} bash -c "echo 'Application deployed successfully!'"
+          docker run --rm aykosn/nginx-concept:${{ github.sha }} sh -c "echo 'Application deployed successfully!'"
